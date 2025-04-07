@@ -1,12 +1,12 @@
-const Menu = require('../models/menu');
+const Menu = require('../models/menus');
 
 const menuController = {
     // Create
     createMenu: async (req, res) => {
         try {
-            const { menuName, description } = req.body;
+            const { name, description } = req.body;  // Sửa menuName thành name
             const newMenu = new Menu({
-                menuName,
+                name,
                 description
             });
             await newMenu.save();
@@ -42,14 +42,14 @@ const menuController = {
     // Update
     updateMenu: async (req, res) => {
         try {
-            const { menuName, description, status } = req.body;
+            const { name, description, status } = req.body;  // Sửa menuName thành name
             const menu = await Menu.findById(req.params.id);
             
             if (!menu) {
                 return res.status(404).json({ message: 'Menu not found' });
             }
 
-            menu.menuName = menuName || menu.menuName;
+            menu.name = name || menu.name;
             menu.description = description || menu.description;
             menu.status = status !== undefined ? status : menu.status;
 
@@ -67,7 +67,7 @@ const menuController = {
             if (!menu) {
                 return res.status(404).json({ message: 'Menu not found' });
             }
-            await menu.remove();
+            await menu.deleteOne();  // Sửa remove() thành deleteOne()
             res.json({ message: 'Menu deleted successfully' });
         } catch (error) {
             res.status(500).json({ message: error.message });
@@ -75,4 +75,4 @@ const menuController = {
     }
 };
 
-module.exports = menuController; 
+module.exports = menuController;

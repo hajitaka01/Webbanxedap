@@ -30,4 +30,5 @@ roleSchema.pre('save', function(next) {
 
 const Role = mongoose.model('Role', roleSchema);
 
-module.exports = Role; 
+// Redirect đến file role.js
+module.exports = require('./role');

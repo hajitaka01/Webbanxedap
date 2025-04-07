@@ -1,5 +1,5 @@
-let userSchema = require('../models/users');
-let roleSchema = require('../models/roles');
+let userSchema = require('../models/user');
+let roleSchema = require('../models/role');
 let bcrypt = require('bcrypt')
 let jwt = require('jsonwebtoken')
 let constants = require('../Utils/constants')
@@ -22,9 +22,12 @@ module.exports = {
     createUser: async function (username, password, email, role) {
         let roleCheck = await roleSchema.findOne({ roleName: role });
         if (roleCheck) {
+            // Hash mật khẩu trước khi lưu
+            const hashedPassword = await bcrypt.hash(password, 10);
+            
             let newUser = new userSchema({
                 username: username,
-                password: password,
+                password: hashedPassword,  // Sử dụng mật khẩu đã hash
                 email: email,
                 role: roleCheck._id,
             });
@@ -33,7 +36,6 @@ module.exports = {
         } else {
             throw new Error("role khong ton tai");
         }
-
     },
     checkLogin: async function (username, password) {
         if (username && password) {

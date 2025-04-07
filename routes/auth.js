@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/auth');
+const userController = require('../controllers/users'); // Thêm dòng này nếu chưa có
 const { check_authentication } = require('../Utils/check_auth');
 let crypto = require('crypto')
 let mailMiddleware = require('../Utils/sendMail')
@@ -22,7 +23,7 @@ router.get('/me', check_authentication, async function (req, res, next) {
   }
 })
 
-router.post('/forgotpasswood', async function (req, res, next) {
+router.post('/forgotpassword', async function (req, res, next) {  // Sửa lại tên route
   let body = req.body;
   let email = body.email;
   let user = await userController.getUserByEmail(email);

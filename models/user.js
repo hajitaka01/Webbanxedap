@@ -49,6 +49,18 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: true
     },
+    resetPasswordToken: {
+        type: String,
+        default: null
+    },
+    resetPasswordTokenExp: {
+        type: Number,
+        default: null
+    },
+    avatarUrl: {
+        type: String,
+        default: ''
+    },
     createdAt: {
         type: Date,
         default: Date.now
@@ -67,4 +79,4 @@ userSchema.pre('save', function(next) {
 
 const User = mongoose.model('User', userSchema);
 
-module.exports = User; 
+module.exports = User;

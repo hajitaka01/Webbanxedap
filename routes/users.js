@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-let userSchema = require('../models/users');
+let userSchema = require('../models/user');
 let userController = require('../controllers/users')
 let BuildQueries = require('../Utils/BuildQuery');
 let { check_authentication,

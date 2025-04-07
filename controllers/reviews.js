@@ -108,7 +108,7 @@ const reviewController = {
                 return res.status(403).json({ message: 'Không có quyền xóa đánh giá này' });
             }
 
-            await review.remove();
+            await review.deleteOne();
             res.json({ message: 'Đánh giá đã được xóa' });
         } catch (error) {
             res.status(500).json({ message: error.message });

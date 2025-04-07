@@ -1,4 +1,4 @@
-const Role = require('../models/roles');
+const Role = require('../models/role');
 
 const roleController = {
     // Tạo role mới
@@ -83,7 +83,7 @@ const roleController = {
                 return res.status(404).json({ message: 'Role không tồn tại' });
             }
 
-            await role.remove();
+            await role.deleteOne();
             res.json({ message: 'Xóa role thành công' });
         } catch (error) {
             res.status(500).json({ message: error.message });
