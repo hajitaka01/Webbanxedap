@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cycle Shop - Cửa hàng xe đạp chuyên nghiệp</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <header>
@@ -13,14 +13,14 @@
             <div class="header-top">
                 <div class="logo">
                     <i class="fas fa-bicycle"></i>
-                    <a href="/">Cycle Shop</a>
+                    <a href="/">Website bán xe đạp</a>
                 </div>
                 <div class="search-bar">
                     <input type="text" placeholder="Tìm kiếm sản phẩm...">
                     <button type="submit"><i class="fas fa-search"></i></button>
                 </div>
                 <div class="header-actions">
-                    <a href="/account" class="action-item">
+                    <a href="http://localhost:3000/auth/login" class="action-item">
                         <i class="fas fa-user"></i>
                         <span>Tài khoản</span>
                     </a>
@@ -70,7 +70,14 @@
                     <p class="section-subtitle">Khám phá các dòng xe đạp phù hợp với bạn</p>
                 </div>
                 <div class="categories-grid" id="categories-container">
-                    <!-- Các danh mục sẽ được render động -->
+                    <div class="category-card">
+                        <img src="/api/placeholder/400/350" alt="Xe đạp địa hình">
+                        <div class="category-card-content">
+                            <h3>Xe đạp địa hình</h3>
+                            <p>Khám phá mọi địa hình với dòng xe chuyên dụng</p>
+                            <a href="#" class="btn">Xem thêm</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -82,7 +89,30 @@
                     <p class="section-subtitle">Những mẫu xe đạp được ưa chuộng nhất</p>
                 </div>
                 <div class="products-grid" id="featured-products-container">
-                    <!-- Sản phẩm sẽ được render động -->
+                    <div class="product-card">
+                        <div class="product-card-image">
+                            <img src="/api/placeholder/400/300" alt="Xe đạp thể thao">
+                            <span class="product-badge">Mới</span>
+                        </div>
+                        <div class="product-card-content">
+                            <h3 class="product-title">Xe đạp thể thao XYZ Pro</h3>
+                            <div class="product-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <div class="product-price">
+                                <span class="discount">12.000.000đ</span>
+                                9.500.000đ
+                            </div>
+                            <div class="product-actions">
+                                <a href="#" class="btn btn-primary">Mua ngay</a>
+                                <a href="#" class="btn btn-outline">Chi tiết</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -174,6 +204,44 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="scripts/script.js"></script>
+    <script>
+    // Back to top button
+    const backToTopButton = document.createElement('a');
+    backToTopButton.classList.add('back-to-top');
+    backToTopButton.innerHTML = '<i class="fas fa-chevron-up"></i>';
+    document.body.appendChild(backToTopButton);
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            backToTopButton.classList.add('visible');
+        } else {
+            backToTopButton.classList.remove('visible');
+        }
+    });
+
+    backToTopButton.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+
+    // Thêm các class animation
+    document.querySelectorAll('.category-card, .product-card, .service-card').forEach(el => {
+        el.classList.add('hover-shadow');
+    });
+
+    // Load fonts
+    const robotoFont = document.createElement('link');
+    robotoFont.rel = 'stylesheet';
+    robotoFont.href = 'https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap';
+    document.head.appendChild(robotoFont);
+
+    const montserratFont = document.createElement('link');
+    montserratFont.rel = 'stylesheet';
+    montserratFont.href = 'https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap';
+    document.head.appendChild(montserratFont);
+    </script>
 </body>
 </html>

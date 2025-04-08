@@ -82,11 +82,11 @@ module.exports = {
                 }
 
                 const role = req.user.role.roleName;
-                
+
                 // Định nghĩa quyền cho từng vai trò
                 const rolePermissions = {
-                    admin: ['CRUD', 'VIEW', 'CRUD_SERVICES', 'CRUD_ORDERS', 'CRUD_REVIEWS'], 
-                    user: ['VIEW', 'CRUD_ORDERS', 'CRUD_REVIEWS'], 
+                    admin: ['CRUD', 'VIEW', 'CRUD_SERVICES', 'CRUD_ORDERS', 'CRUD_REVIEWS', 'CRUD_CATEGORIES', 'CRUD_PRODUCTS', 'CRUD_ROLES', 'CRUD_USERS'],
+                    user: ['VIEW', 'CRUD_ORDERS', 'CRUD_REVIEWS'],
                     technician: ['VIEW', 'CRUD_SERVICES']
                 };
 
@@ -96,7 +96,7 @@ module.exports = {
                 }
 
                 // Kiểm tra quyền
-                const hasPermission = requiredPermissions.some(permission => 
+                const hasPermission = requiredPermissions.every(permission => 
                     rolePermissions[role]?.includes(permission)
                 );
 
