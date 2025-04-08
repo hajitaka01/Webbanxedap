@@ -1,24 +1,48 @@
 const express = require('express');
 const router = express.Router();
 const orderController = require('../controllers/orders');
-const auth = require('../Utils/check_auth');
+const { check_authentication, check_authorization } = require('../Utils/check_auth');
 
-// Tất cả các route đều yêu cầu xác thực
-router.use(auth.check_authentication);
-
-// Tạo đơn hàng mới
-router.post('/', orderController.createOrder);
-
-// Lấy danh sách đơn hàng của user
-router.get('/user', orderController.getUserOrders);
+// Lấy danh sách đơn hàng
+router.get('/', 
+  check_authentication, 
+  check_authorization(['VIEW', 'CRUD_ORDERS']), 
+  orderController.getAllOrders  // Đảm bảo method được gọi chính xác
+);
 
 // Lấy chi tiết đơn hàng
-router.get('/:id', orderController.getOrderDetail);
+router.get('/:id', 
+  check_authentication, 
+  check_authorization(['VIEW', 'CRUD_ORDERS']), 
+  orderController.getOrderById
+);
 
-// Cập nhật trạng thái đơn hàng (admin)
-router.patch('/:id/status', auth.check_authorization(['admin']), orderController.updateOrderStatus);
+// Tạo đơn hàng mới
+router.post('/', 
+  check_authentication, 
+  check_authorization(['CRUD_ORDERS']), 
+  orderController.createOrder
+);
+
+// Cập nhật trạng thái đơn hàng
+router.put('/:id/status', 
+  check_authentication, 
+  check_authorization(['CRUD_ORDERS']), 
+  orderController.updateOrderStatus
+);
 
 // Hủy đơn hàng
-router.patch('/:id/cancel', orderController.cancelOrder);
+router.put('/:id/cancel', 
+  check_authentication, 
+  check_authorization(['CRUD_ORDERS']), 
+  orderController.cancelOrder
+);
 
-module.exports = router; 
+// Xóa đơn hàng
+router.delete('/:id', 
+  check_authentication, 
+  check_authorization(['CRUD_ORDERS']), 
+  orderController.deleteOrder
+);
+
+module.exports = router;

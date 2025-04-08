@@ -1,22 +1,41 @@
 const express = require('express');
 const router = express.Router();
 const menuController = require('../controllers/menus');
-const auth = require('../Utils/check_auth');
+const { check_authentication, check_authorization } = require('../Utils/check_auth');
 
-// Tất cả các route đều yêu cầu xác thực
-router.use(auth.check_authentication);
+// Lấy danh sách menus
+router.get('/', 
+  check_authentication, 
+  check_authorization(['VIEW']), 
+  menuController.getAllMenus
+);
 
-// Create
-router.post('/', menuController.createMenu);
+// Lấy chi tiết menu
+router.get('/:id', 
+  check_authentication, 
+  check_authorization(['VIEW']), 
+  menuController.getMenuById
+);
 
-// Read
-router.get('/', menuController.getAllMenus);
-router.get('/:id', menuController.getMenuById);
+// Tạo menu mới
+router.post('/', 
+  check_authentication, 
+  check_authorization(['CRUD']), 
+  menuController.createMenu
+);
 
-// Update
-router.put('/:id', menuController.updateMenu);
+// Cập nhật menu
+router.put('/:id', 
+  check_authentication, 
+  check_authorization(['CRUD']), 
+  menuController.updateMenu
+);
 
-// Delete
-router.delete('/:id', menuController.deleteMenu);
+// Xóa menu
+router.delete('/:id', 
+  check_authentication, 
+  check_authorization(['CRUD']), 
+  menuController.deleteMenu
+);
 
 module.exports = router;

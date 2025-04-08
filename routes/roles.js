@@ -1,23 +1,41 @@
 const express = require('express');
 const router = express.Router();
 const roleController = require('../controllers/roles');
-const auth = require('../Utils/check_auth');
+const { check_authentication, check_authorization } = require('../Utils/check_auth');
 
-// Tất cả các route đều yêu cầu xác thực và quyền admin
-router.use(auth.check_authentication);
-router.use(auth.check_authorization(['admin']));
+// Lấy danh sách roles (chỉ admin)
+router.get('/', 
+  check_authentication, 
+  check_authorization(['CRUD', 'VIEW']), 
+  roleController.getAllRoles
+);
 
-// Create
-router.post('/', roleController.createRole);
+// Lấy chi tiết role (chỉ admin)
+router.get('/:id', 
+  check_authentication, 
+  check_authorization(['CRUD', 'VIEW']), 
+  roleController.getRoleById
+);
 
-// Read
-router.get('/', roleController.getAllRoles);
-router.get('/:id', roleController.getRoleById);
+// Tạo role mới (chỉ admin)
+router.post('/', 
+  check_authentication, 
+  check_authorization(['CRUD']), 
+  roleController.createRole
+);
 
-// Update
-router.put('/:id', roleController.updateRole);
+// Cập nhật role (chỉ admin)
+router.put('/:id', 
+  check_authentication, 
+  check_authorization(['CRUD']), 
+  roleController.updateRole
+);
 
-// Delete
-router.delete('/:id', roleController.deleteRole);
+// Xóa role (chỉ admin)
+router.delete('/:id', 
+  check_authentication, 
+  check_authorization(['CRUD']), 
+  roleController.deleteRole
+);
 
 module.exports = router;

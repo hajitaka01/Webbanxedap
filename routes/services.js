@@ -1,27 +1,55 @@
 const express = require('express');
 const router = express.Router();
 const serviceController = require('../controllers/services');
-const auth = require('../Utils/check_auth');
+const { check_authentication, check_authorization } = require('../Utils/check_auth');
 
-// Tất cả các route đều yêu cầu xác thực
-router.use(auth.check_authentication);
-
-// Tạo yêu cầu dịch vụ mới
-router.post('/', serviceController.createService);
-
-// Lấy danh sách dịch vụ của user
-router.get('/user', serviceController.getUserServices);
+// Lấy danh sách dịch vụ
+router.get('/', 
+  check_authentication, 
+  check_authorization(['VIEW', 'CRUD_SERVICES']), 
+  serviceController.getAllServices
+);
 
 // Lấy chi tiết dịch vụ
-router.get('/:id', serviceController.getServiceDetail);
+router.get('/:id', 
+  check_authentication, 
+  check_authorization(['VIEW', 'CRUD_SERVICES']), 
+  serviceController.getServiceById
+);
 
-// Cập nhật trạng thái dịch vụ (admin/technician)
-router.patch('/:id/status', auth.check_authorization(['admin', 'technician']), serviceController.updateServiceStatus);
+// Tạo dịch vụ mới
+router.post('/', 
+  check_authentication, 
+  check_authorization(['CRUD_SERVICES']), 
+  serviceController.createService
+);
 
-// Gán kỹ thuật viên (admin)
-router.patch('/:id/assign', auth.check_authorization(['admin']), serviceController.assignTechnician);
+// Cập nhật trạng thái dịch vụ
+router.put('/:id/status', 
+  check_authentication, 
+  check_authorization(['CRUD_SERVICES']), 
+  serviceController.updateServiceStatus
+);
+
+// Gán kỹ thuật viên
+router.put('/:id/assign', 
+  check_authentication, 
+  check_authorization(['CRUD']), 
+  serviceController.assignTechnician
+);
 
 // Hủy dịch vụ
-router.patch('/:id/cancel', serviceController.cancelService);
+router.put('/:id/cancel', 
+  check_authentication, 
+  check_authorization(['CRUD_SERVICES']), 
+  serviceController.cancelService
+);
 
-module.exports = router; 
+// Xóa dịch vụ
+router.delete('/:id', 
+  check_authentication, 
+  check_authorization(['CRUD_SERVICES']), 
+  serviceController.deleteService
+);
+
+module.exports = router;

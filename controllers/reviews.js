@@ -1,7 +1,92 @@
 const Review = require('../models/reviews');
 const Order = require('../models/orders');
 
-const reviewController = {
+// Export theo dạng object
+module.exports = {
+    // Lấy đánh giá của sản phẩm
+    getProductReviews: async (req, res) => {
+        try {
+            const { productId } = req.params;
+            const reviews = await Review.find({ 
+                product: productId,
+                status: 'approved'
+            })
+            .populate('user', 'username avatarUrl')
+            .sort({ createdAt: -1 });
+            
+            res.status(200).json({
+                success: true,
+                data: reviews
+            });
+        } catch (error) {
+            res.status(500).json({ 
+                success: false,
+                message: error.message 
+            });
+        }
+    },
+
+    // Lấy tất cả đánh giá
+    getAllReviews: async (req, res) => {
+        try {
+            // Nếu là admin, lấy tất cả đánh giá
+            // Nếu là user thông thường, chỉ lấy đánh giá của user đó
+            const query = req.user.role.roleName === 'admin' 
+                ? {} 
+                : { user: req.user._id };
+
+            const reviews = await Review.find(query)
+                .populate('user', 'username')
+                .populate('product', 'productName')
+                .sort({ createdAt: -1 });
+
+            res.status(200).json({
+                success: true,
+                data: reviews
+            });
+        } catch (error) {
+            res.status(500).json({ 
+                success: false,
+                message: error.message 
+            });
+        }
+    },
+
+    // Lấy chi tiết đánh giá
+    getReviewById: async (req, res) => {
+        try {
+            const review = await Review.findById(req.params.id)
+                .populate('user', 'username')
+                .populate('product', 'productName');
+
+            if (!review) {
+                return res.status(404).json({ 
+                    success: false,
+                    message: 'Đánh giá không tồn tại' 
+                });
+            }
+
+            // Kiểm tra quyền truy cập
+            if (req.user.role.roleName !== 'admin' && 
+                review.user.toString() !== req.user._id.toString()) {
+                return res.status(403).json({ 
+                    success: false,
+                    message: 'Không có quyền truy cập đánh giá này' 
+                });
+            }
+
+            res.status(200).json({
+                success: true,
+                data: review
+            });
+        } catch (error) {
+            res.status(500).json({ 
+                success: false,
+                message: error.message 
+            });
+        }
+    },
+
     // Tạo đánh giá mới
     createReview: async (req, res) => {
         try {
@@ -26,43 +111,15 @@ const reviewController = {
             });
 
             await newReview.save();
-            res.status(201).json(newReview);
-        } catch (error) {
-            res.status(500).json({ message: error.message });
-        }
-    },
-
-    // Lấy danh sách đánh giá của sản phẩm
-    getProductReviews: async (req, res) => {
-        try {
-            const { productId } = req.params;
-            const reviews = await Review.find({ 
-                product: productId,
-                status: 'approved'
-            })
-            .populate('user', 'username avatarUrl')
-            .sort({ createdAt: -1 });
-            
-            res.json(reviews);
-        } catch (error) {
-            res.status(500).json({ message: error.message });
-        }
-    },
-
-    // Lấy đánh giá của user cho sản phẩm
-    getUserReview: async (req, res) => {
-        try {
-            const { productId } = req.params;
-            const userId = req.user._id;
-
-            const review = await Review.findOne({
-                user: userId,
-                product: productId
+            res.status(201).json({
+                success: true,
+                data: newReview
             });
-
-            res.json(review);
         } catch (error) {
-            res.status(500).json({ message: error.message });
+            res.status(500).json({ 
+                success: false,
+                message: error.message 
+            });
         }
     },
 
@@ -73,12 +130,18 @@ const reviewController = {
             const review = await Review.findById(req.params.id);
 
             if (!review) {
-                return res.status(404).json({ message: 'Đánh giá không tồn tại' });
+                return res.status(404).json({ 
+                    success: false,
+                    message: 'Đánh giá không tồn tại' 
+                });
             }
 
             // Kiểm tra quyền sửa đánh giá
             if (review.user.toString() !== req.user._id.toString()) {
-                return res.status(403).json({ message: 'Không có quyền sửa đánh giá này' });
+                return res.status(403).json({ 
+                    success: false,
+                    message: 'Không có quyền sửa đánh giá này' 
+                });
             }
 
             review.rating = rating;
@@ -88,9 +151,15 @@ const reviewController = {
             review.status = 'pending'; // Reset trạng thái khi cập nhật
 
             await review.save();
-            res.json(review);
+            res.status(200).json({
+                success: true,
+                data: review
+            });
         } catch (error) {
-            res.status(500).json({ message: error.message });
+            res.status(500).json({ 
+                success: false,
+                message: error.message 
+            });
         }
     },
 
@@ -100,38 +169,58 @@ const reviewController = {
             const review = await Review.findById(req.params.id);
 
             if (!review) {
-                return res.status(404).json({ message: 'Đánh giá không tồn tại' });
+                return res.status(404).json({ 
+                    success: false,
+                    message: 'Đánh giá không tồn tại' 
+                });
             }
 
             // Kiểm tra quyền xóa
-            if (review.user.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
-                return res.status(403).json({ message: 'Không có quyền xóa đánh giá này' });
+            if (review.user.toString() !== req.user._id.toString() && 
+                req.user.role.roleName !== 'admin') {
+                return res.status(403).json({ 
+                    success: false,
+                    message: 'Không có quyền xóa đánh giá này' 
+                });
             }
 
             await review.deleteOne();
-            res.json({ message: 'Đánh giá đã được xóa' });
+            res.status(200).json({ 
+                success: true,
+                message: 'Xóa đánh giá thành công' 
+            });
         } catch (error) {
-            res.status(500).json({ message: error.message });
+            res.status(500).json({ 
+                success: false,
+                message: error.message 
+            });
         }
     },
 
-    // Duyệt đánh giá (admin)
+    // Duyệt đánh giá (chỉ admin)
     approveReview: async (req, res) => {
         try {
             const { status } = req.body;
             const review = await Review.findById(req.params.id);
 
             if (!review) {
-                return res.status(404).json({ message: 'Đánh giá không tồn tại' });
+                return res.status(404).json({ 
+                    success: false,
+                    message: 'Đánh giá không tồn tại' 
+                });
             }
 
             review.status = status;
             await review.save();
-            res.json(review);
+            res.status(200).json({
+                success: true,
+                data: review
+            });
         } catch (error) {
-            res.status(500).json({ message: error.message });
+            res.status(500).json({ 
+                success: false,
+                message: error.message 
+            });
         }
     }
 };
-
-module.exports = reviewController; 
