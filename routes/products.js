@@ -1,23 +1,19 @@
-const { fail } = require('assert');
-var express = require('express');
-var router = express.Router();
-let productSchema = require('../models/products');
-let BuildQueies = require('../Utils/BuildQuery');
+const express = require('express');
+const router = express.Router();
 const productController = require('../controllers/products');
+const { check_authentication, check_authorization } = require('../Utils/check_auth');
 
-// Lấy danh sách sản phẩm với điều kiện tìm kiếm (GET)
-router.get('/', productController.getProducts);
+//  GET: Xem danh sách và chi tiết sản phẩm → yêu cầu quyền "product:read"
+router.get('/', check_authentication, check_authorization(['product:read']), productController.getProducts);
+router.get('/:id', check_authentication, check_authorization(['product:read']), productController.getProductById);
 
-// Lấy chi tiết sản phẩm theo ID (GET)
-router.get('/:id', productController.getProductById);
+//  POST: Tạo sản phẩm → yêu cầu quyền "product:create"
+router.post('/', check_authentication, check_authorization(['product:create']), productController.createProduct);
 
-// Thêm sản phẩm mới (POST)
-router.post('/', productController.createProduct);
+//  PUT: Cập nhật sản phẩm → yêu cầu quyền "product:update"
+router.put('/:id', check_authentication, check_authorization(['product:update']), productController.updateProduct);
 
-// Cập nhật thông tin sản phẩm (PUT)
-router.put('/:id', productController.updateProduct);
-
-// Xóa sản phẩm (DELETE)
-router.delete('/:id', productController.deleteProduct);
+// DELETE: Xóa sản phẩm → yêu cầu quyền "product:delete"
+router.delete('/:id', check_authentication, check_authorization(['product:delete']), productController.deleteProduct);
 
 module.exports = router;

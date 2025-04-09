@@ -36,7 +36,7 @@ module.exports = {
                     });
                 }
 
-                // Lấy thông tin user và role
+                // Lấy thông tin user và role (populate để lấy cả permissions)
                 const user = await User.findById(decoded.userId).populate('role');
                 
                 if (!user) {
@@ -46,8 +46,7 @@ module.exports = {
                     });
                 }
 
-                // Lưu thông tin user vào request
-                req.user = user;
+                req.user = user; // Đưa user vào request
                 next();
             } catch (error) {
                 if (error.name === 'TokenExpiredError') {
@@ -70,44 +69,40 @@ module.exports = {
         }
     },
 
-    // Kiểm tra quyền truy cập
+    // Kiểm tra quyền truy cập động từ database
     check_authorization: (requiredPermissions) => {
         return (req, res, next) => {
             try {
-                if (!req.user || !req.user.role) {
+                const user = req.user;
+
+                if (!user || !user.role || !user.role.permissions) {
                     return res.status(403).json({ 
                         success: false, 
                         message: "Không có quyền truy cập" 
                     });
                 }
 
-                const role = req.user.role.roleName;
+                const roleName = user.role.roleName;
+                const userPermissions = user.role.permissions;
 
-                // Định nghĩa quyền cho từng vai trò
-                const rolePermissions = {
-                    admin: ['CRUD', 'VIEW', 'CRUD_SERVICES', 'CRUD_ORDERS', 'CRUD_REVIEWS', 'CRUD_CATEGORIES', 'CRUD_PRODUCTS', 'CRUD_ROLES', 'CRUD_USERS'],
-                    user: ['VIEW', 'CRUD_ORDERS', 'CRUD_REVIEWS'],
-                    technician: ['VIEW', 'CRUD_SERVICES']
-                };
-
-                // Admin có toàn quyền
-                if (role === 'admin') {
+                // Nếu là admin, cho phép tất cả hành động
+                if (roleName === 'admin') {
                     return next();
                 }
 
-                // Kiểm tra quyền
-                const hasPermission = requiredPermissions.every(permission => 
-                    rolePermissions[role]?.includes(permission)
+                // Kiểm tra user có đủ mọi quyền được yêu cầu không
+                const hasPermission = requiredPermissions.every(permission =>
+                    userPermissions.includes(permission)
                 );
 
                 if (hasPermission) {
-                    next();
+                    return next();
                 } else {
                     return res.status(403).json({ 
                         success: false, 
-                        message: `Vai trò ${role} không có quyền thực hiện hành động này`,
-                        userRole: role,
-                        requiredPermissions: requiredPermissions
+                        message: `Vai trò ${roleName} không có quyền thực hiện hành động này`,
+                        requiredPermissions,
+                        userPermissions
                     });
                 }
             } catch (error) {

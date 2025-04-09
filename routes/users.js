@@ -1,25 +1,34 @@
-var express = require('express');
-var router = express.Router();
-let userSchema = require('../models/user');
+const express = require('express');
+const router = express.Router();
 const userController = require('../controllers/users');
-let BuildQueries = require('../Utils/BuildQuery');
-let { check_authentication, check_authorization } = require('../Utils/check_auth');
-let constants = require('../Utils/constants');
-let multer = require('multer');
-let path = require('path');
-let axios = require('axios');
-let FormData = require('form-data');
-let fs = require('fs');
+const { check_authentication, check_authorization } = require('../Utils/check_auth');
 
-router.get('/', userController.getUsers);
+// Lấy danh sách người dùng (chỉ admin hoặc có quyền manage_users)
+router.get('/',
+  check_authentication,
+  check_authorization(['manage_users']),
+  userController.getUsers
+);
 
-router.get('/:id', check_authentication, userController.getUserById);
+// Lấy thông tin người dùng theo ID
+router.get('/:id',
+  check_authentication,
+  check_authorization(['manage_users']),
+  userController.getUserById
+);
 
+// Tạo người dùng mới
 router.post('/',
   check_authentication,
-  check_authorization(constants.MOD_PERMISSION),
-  userController.createUser);
+  check_authorization(['manage_users']),
+  userController.createUser
+);
 
-router.put('/:id', userController.updateUser);
+// Cập nhật thông tin người dùng
+router.put('/:id',
+  check_authentication,
+  check_authorization(['manage_users']),
+  userController.updateUser
+);
 
 module.exports = router;

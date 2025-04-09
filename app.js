@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const createError = require('http-errors');
 const { check_authentication } = require('./Utils/check_auth');
+const fs = require('fs');
 
 // Routes
 const indexRouter = require('./routes/index');
@@ -18,6 +19,7 @@ const categoriesRouter = require('./routes/categories');
 const ordersRouter = require('./routes/orders');
 const reviewsRouter = require('./routes/reviews');
 const servicesRouter = require('./routes/services');
+const uploadRouter = require('./routes/upload');
 
 const app = express();
 
@@ -43,9 +45,16 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser('NNPTUD'));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Tạo thư mục uploads nếu chưa tồn tại
+const uploadDir = path.join(__dirname, 'public/uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 // Unrestricted Routes
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
+app.use('/upload', uploadRouter);
 
 // Global Authentication Middleware
 const excludedPaths = ['/auth', '/index', '/register', '/login'];

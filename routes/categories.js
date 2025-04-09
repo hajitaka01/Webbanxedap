@@ -1,16 +1,44 @@
-const { fail } = require('assert');
-var express = require('express');
-var router = express.Router();
-let categorySchema = require('../models/catgories')
-let BuildQueies = require('../Utils/BuildQuery')
+const express = require('express');
+const router = express.Router();
 const categoryController = require('../controllers/categories');
+const auth = require('../Utils/check_auth'); // Middleware xác thực & phân quyền
 
-//http://localhost:3000/products?name=iph&price[$gte]=1600&price[$lte]=3000
-/* GET users listing. */
-router.get('/', categoryController.getCategories);
-router.get('/:id', categoryController.getCategoryById);
-router.put('/:id', categoryController.updateCategory);
-router.post('/', categoryController.createCategory);
-router.delete('/:id', categoryController.deleteCategory);
+// Lấy danh sách tất cả category - yêu cầu đăng nhập
+router.get(
+  '/',
+  auth.check_authentication,
+  categoryController.getCategories
+);
+
+// Xem chi tiết category theo ID - yêu cầu đăng nhập
+router.get(
+  '/:id',
+  auth.check_authentication,
+  categoryController.getCategoryById
+);
+
+// Thêm mới category - chỉ admin
+router.post(
+  '/',
+  auth.check_authentication,
+  auth.check_authorization(['category:create']),
+  categoryController.createCategory
+);
+
+// Cập nhật category - chỉ admin
+router.put(
+  '/:id',
+  auth.check_authentication,
+  auth.check_authorization(['category:update']),
+  categoryController.updateCategory
+);
+
+// Xóa category - chỉ admin
+router.delete(
+  '/:id',
+  auth.check_authentication,
+  auth.check_authorization(['category:delete']),
+  categoryController.deleteCategory
+);
 
 module.exports = router;
