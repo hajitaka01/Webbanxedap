@@ -3,51 +3,378 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng nhập - Web Bán Xe Đạp</title>
+    <title>Đăng nhập - CyclePro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #2e7d32;
+            --secondary-color: #4caf50;
+            --accent-color: #8bc34a;
+            --dark-color: #1b5e20;
+            --light-color: #f1f8e9;
+            --text-color: #212121;
+        }
+        
         body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f8f9fa;
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
         }
-        .login-container {
-            max-width: 400px;
-            margin: 100px auto;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        .form-control:focus {
-            border-color: #80bdff;
-            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-        }
-        .btn-primary {
+        
+        .page-container {
             width: 100%;
-            padding: 10px;
+            max-width: 1200px;
+            display: flex;
+            min-height: 80vh;
+            margin: 0 auto;
+            position: relative;
         }
-        .alert {
+        
+        .login-image {
+            flex: 1;
+            background-image: url('/api/placeholder/800/1200');
+            background-size: cover;
+            background-position: center;
             display: none;
+            border-radius: 12px 0 0 12px;
+        }
+        
+        .login-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            width: 100%;
+            max-width: 450px;
+            padding: 40px 30px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+        
+        .login-brand {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .brand-logo {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .brand-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        .brand-tagline {
+            font-size: 0.9rem;
+            color: #777;
+        }
+        
+        .login-heading {
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: var(--text-color);
+        }
+        
+        .form-floating {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .form-floating input.form-control {
+            height: 58px;
+            border-radius: 8px;
+            border: 2px solid #eee;
+            padding-left: 20px;
+            padding-right: 50px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-floating input.form-control:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.15rem rgba(46, 125, 50, 0.25);
+        }
+        
+        .form-floating > label {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            z-index: 10;
+            color: #6c757d;
+        }
+        
+        .forgot-password {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+        
+        .forgot-password a {
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .forgot-password a:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+        
+        .login-btn {
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            padding: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .login-btn:hover {
+            background-color: var(--dark-color);
+            transform: translateY(-2px);
+        }
+        
+        .login-btn .bi {
+            margin-right: 8px;
+        }
+        
+        .social-login {
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .social-login::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background-color: #eee;
+            z-index: 1;
+        }
+        
+        .social-login-text {
+            display: inline-block;
+            padding: 0 15px;
+            background-color: white;
+            position: relative;
+            z-index: 2;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .social-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            border: 2px solid #eee;
+            background-color: white;
+            font-size: 1.2rem;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+        
+        .social-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .social-button.facebook {
+            color: #1877F2;
+        }
+        
+        .social-button.google {
+            color: #EA4335;
+        }
+        
+        .social-button.apple {
+            color: #000;
+        }
+        
+        .register-prompt {
+            text-align: center;
+            margin-top: 20px;
+            color: #6c757d;
+            font-size: 0.95rem;
+        }
+        
+        .register-prompt a {
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .register-prompt a:hover {
+            text-decoration: underline;
+        }
+        
+        .alert {
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: none;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .back-to-home {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        
+        .back-to-home:hover {
+            color: var(--dark-color);
+        }
+        
+        .back-to-home i {
+            margin-right: 5px;
+        }
+        
+        @media (min-width: 992px) {
+            .page-container {
+                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+                border-radius: 12px;
+                overflow: hidden;
+                background-color: white;
+            }
+            
+            .login-image {
+                display: block;
+            }
+            
+            .login-container {
+                max-width: 500px;
+                padding: 50px 40px;
+                box-shadow: none;
+                border-radius: 0;
+            }
+            
+            .login-wrapper {
+                background-color: white;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="login-container">
-            <h2 class="text-center mb-4">Đăng nhập</h2>
-            <div class="alert alert-danger" id="errorAlert" role="alert"></div>
-            <form id="loginForm">
-                <div class="mb-3">
-                    <label for="username" class="form-label">Tên đăng nhập</label>
-                    <input type="text" class="form-control" id="username" name="username" required>
+    <a href="/" class="back-to-home">
+        <i class="bi bi-arrow-left"></i> Quay lại trang chủ
+    </a>
+    
+    <div class="page-container">
+        <div class="login-image"></div>
+        <div class="login-wrapper">
+            <div class="login-container">
+                <div class="login-brand">
+                    <div class="brand-logo">
+                        <i class="bi bi-bicycle"></i>
+                    </div>
+                    <div class="brand-name">CyclePro</div>
+                    <div class="brand-tagline">Cửa hàng xe đạp chuyên nghiệp</div>
                 </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Mật khẩu</label>
-                    <input type="password" class="form-control" id="password" name="password" required>
+                
+                <h2 class="login-heading">Đăng nhập</h2>
+                
+                <div class="alert alert-danger" id="errorAlert" role="alert" style="display: none;"></div>
+                
+                <form id="loginForm">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Tên đăng nhập" required>
+                        <label for="username"><i class="bi bi-person me-2"></i>Tên đăng nhập</label>
+                    </div>
+                    
+                    <div class="form-floating">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Mật khẩu" required>
+                        <label for="password"><i class="bi bi-lock me-2"></i>Mật khẩu</label>
+                        <i class="password-toggle bi bi-eye-slash" id="passwordToggle"></i>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">
+                                Ghi nhớ đăng nhập
+                            </label>
+                        </div>
+                        <div class="forgot-password">
+                            <a href="/forgot-password.html">Quên mật khẩu?</a>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary login-btn w-100">
+                        <i class="bi bi-box-arrow-in-right"></i> Đăng nhập
+                    </button>
+                </form>
+                
+                <div class="social-login">
+                    <span class="social-login-text">Hoặc đăng nhập với</span>
+                    <div class="social-buttons">
+                        <a href="#" class="social-button facebook">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                        <a href="#" class="social-button google">
+                            <i class="bi bi-google"></i>
+                        </a>
+                        <a href="#" class="social-button apple">
+                            <i class="bi bi-apple"></i>
+                        </a>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Đăng nhập</button>
-            </form>
-            <div class="text-center mt-3">
-                <p>Chưa có tài khoản? <a href="register.html">Đăng ký ngay</a></p>
+                
+                <div class="register-prompt">
+                    Chưa có tài khoản? <a href="/register.html">Đăng ký ngay</a>
+                </div>
             </div>
         </div>
     </div>
@@ -58,38 +385,83 @@
             
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
             const errorAlert = document.getElementById('errorAlert');
-
+            
             try {
+                // Thêm animation cho nút khi đang xử lý
+                const submitBtn = document.querySelector('.login-btn');
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Đang xử lý...';
+                submitBtn.disabled = true;
+                
                 const response = await fetch('/auth/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ username, password })
+                    body: JSON.stringify({ username, password, rememberMe })
                 });
 
                 const data = await response.json();
 
                 if (data.success) {
-                    // Lưu token vào localStorage
+                    // Lưu token và thông tin người dùng
                     localStorage.setItem('token', data.token);
+                    localStorage.setItem('userData', JSON.stringify(data.user));
                     
-                    // Chuyển hướng dựa trên role
-                    if (data.user.role === 'admin') {
-                        window.location.href = '/admin/products.html';
-                    } else {
-                        window.location.href = '/index.html';
-                    }
-                } else {
-                    errorAlert.textContent = data.message;
+                    // Thông báo thành công
+                    errorAlert.className = 'alert alert-success';
+                    errorAlert.textContent = 'Đăng nhập thành công! Đang chuyển hướng...';
                     errorAlert.style.display = 'block';
+                    
+                    // Chuyển hướng dựa trên role sau 1 giây
+                    setTimeout(() => {
+                        if (data.user.role === 'admin') {
+                            window.location.href = '/admin/products.html';
+                        } else {
+                            window.location.href = '/index.html';
+                        }
+                    }, 1000);
+                } else {
+                    // Hiển thị lỗi
+                    errorAlert.className = 'alert alert-danger';
+                    errorAlert.textContent = data.message || 'Tên đăng nhập hoặc mật khẩu không đúng.';
+                    errorAlert.style.display = 'block';
+                    
+                    // Reset nút submit
+                    submitBtn.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Đăng nhập';
+                    submitBtn.disabled = false;
                 }
             } catch (error) {
-                errorAlert.textContent = 'Đã xảy ra lỗi. Vui lòng thử lại sau.';
+                // Xử lý lỗi kết nối
+                errorAlert.className = 'alert alert-danger';
+                errorAlert.textContent = 'Đã xảy ra lỗi khi kết nối đến máy chủ. Vui lòng thử lại sau.';
                 errorAlert.style.display = 'block';
+                
+                // Reset nút submit
+                const submitBtn = document.querySelector('.login-btn');
+                submitBtn.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Đăng nhập';
+                submitBtn.disabled = false;
+                
+                console.error('Login error:', error);
             }
+        });
+        
+        // Thêm hiệu ứng hiển thị mật khẩu
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordField = document.getElementById('password');
+            const passwordToggle = document.getElementById('passwordToggle');
+            
+            passwordToggle.addEventListener('click', function() {
+                if (passwordField.type === 'password') {
+                    passwordField.type = 'text';
+                    passwordToggle.classList.replace('bi-eye-slash', 'bi-eye');
+                } else {
+                    passwordField.type = 'password';
+                    passwordToggle.classList.replace('bi-eye', 'bi-eye-slash');
+                }
+            });
         });
     </script>
 </body>
-</html> 
+</html>
